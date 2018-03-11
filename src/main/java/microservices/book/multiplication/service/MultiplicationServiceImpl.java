@@ -4,9 +4,10 @@ import microservices.book.multiplication.domain.Multiplication;
 import microservices.book.multiplication.domain.MultiplicationResultAttempt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service
-public class MultiplicationServiceImpl implements MultiplicationService{
+public final class MultiplicationServiceImpl implements MultiplicationService{
 
     private RandomGeneratorService randomGeneratorService;
 
@@ -24,9 +25,20 @@ public class MultiplicationServiceImpl implements MultiplicationService{
     }
 
     @Override
-    public boolean checkAttempt(MultiplicationResultAttempt resultAttempt) {
-        return resultAttempt.getResultAttempt() ==
-                resultAttempt.getMultiplication().getFactorA() *
-                resultAttempt.getMultiplication().getFactorB();
+    public boolean checkAttempt(final MultiplicationResultAttempt attempt) {
+        boolean isCorrect = attempt.getResultAttempt() ==
+                attempt.getMultiplication().getFactorA() *
+                attempt.getMultiplication().getFactorB();
+
+        //check hack
+        Assert.isTrue(!attempt.isCorrect(), "You can't send an attempt marked as correct!");
+
+        MultiplicationResultAttempt checkedAttempt = new MultiplicationResultAttempt(
+                attempt.getUser(),
+                attempt.getMultiplication(),
+                attempt.getResultAttempt(),
+                isCorrect);
+
+        return isCorrect;
     }
 }

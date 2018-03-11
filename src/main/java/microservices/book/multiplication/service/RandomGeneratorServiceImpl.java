@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Service
-public class RandomGeneratorServiceImpl implements RandomGeneratorService {
+public final class RandomGeneratorServiceImpl implements RandomGeneratorService {
 
     private final static int MIN_FACTOR = 11;
     private final static int MAX_FACTOR = 99;
