@@ -1,7 +1,6 @@
 package microservices.book.multiplication.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import microservices.book.multiplication.controller.MultiplicationResultAttemptController.ResultResponse;
 import microservices.book.multiplication.domain.Multiplication;
 import microservices.book.multiplication.domain.MultiplicationResultAttempt;
 import microservices.book.multiplication.domain.User;
@@ -25,8 +24,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(MultiplicationResultAttemptController.class)
@@ -70,7 +69,7 @@ public class MultiplicationResultAttemptControllerTest {
 
         //when
         MockHttpServletResponse response = mvc.perform(
-                get("/results").param("alias","john_doe"))
+                get("/results").param("alias", "john_doe"))
                 .andReturn().getResponse();
 
         //then

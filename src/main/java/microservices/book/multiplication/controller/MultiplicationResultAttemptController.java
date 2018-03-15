@@ -1,8 +1,5 @@
 package microservices.book.multiplication.controller;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import microservices.book.multiplication.domain.MultiplicationResultAttempt;
 import microservices.book.multiplication.service.MultiplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +38,4 @@ public final class MultiplicationResultAttemptController {
                 multiplicationService.getStatsForUser(alias));
     }
 
-    @RequiredArgsConstructor
-    @NoArgsConstructor(force = true)
-    @Getter
-    static final class ResultResponse {
-        private final boolean correct;
-    }
 }

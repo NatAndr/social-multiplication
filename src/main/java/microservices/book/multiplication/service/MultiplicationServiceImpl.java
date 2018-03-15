@@ -3,6 +3,8 @@ package microservices.book.multiplication.service;
 import microservices.book.multiplication.domain.Multiplication;
 import microservices.book.multiplication.domain.MultiplicationResultAttempt;
 import microservices.book.multiplication.domain.User;
+import microservices.book.multiplication.event.EventDispatcher;
+import microservices.book.multiplication.event.MultiplicationSolvedEvent;
 import microservices.book.multiplication.repository.MultiplicationResultAttemptRepository;
 import microservices.book.multiplication.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,19 +16,22 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MultiplicationServiceImpl implements MultiplicationService{
+public class MultiplicationServiceImpl implements MultiplicationService {
 
     private RandomGeneratorService randomGeneratorService;
     private MultiplicationResultAttemptRepository attemptRepository;
     private UserRepository userRepository;
+    private EventDispatcher eventDispatcher;
 
     @Autowired
     public MultiplicationServiceImpl(final RandomGeneratorService randomGeneratorService,
                                      final MultiplicationResultAttemptRepository attemptRepository,
-                                     final UserRepository repository) {
+                                     final UserRepository repository,
+                                     final EventDispatcher eventDispatcher) {
         this.randomGeneratorService = randomGeneratorService;
         this.attemptRepository = attemptRepository;
         this.userRepository = repository;
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
@@ -47,7 +52,7 @@ public class MultiplicationServiceImpl implements MultiplicationService{
 
         boolean isCorrect = attempt.getResultAttempt() ==
                 attempt.getMultiplication().getFactorA() *
-                attempt.getMultiplication().getFactorB();
+                        attempt.getMultiplication().getFactorB();
 
         MultiplicationResultAttempt checkedAttempt = new MultiplicationResultAttempt(
                 user.orElse(attempt.getUser()),
@@ -56,6 +61,13 @@ public class MultiplicationServiceImpl implements MultiplicationService{
                 isCorrect);
 
         attemptRepository.save(checkedAttempt);
+
+        eventDispatcher.send(
+                new MultiplicationSolvedEvent(
+                        checkedAttempt.getId(),
+                        checkedAttempt.getUser().getId(),
+                        checkedAttempt.isCorrect())
+        );
 
         return isCorrect;
     }
